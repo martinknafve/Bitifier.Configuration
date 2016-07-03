@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2010/07/nuspec.xsd">
+  <metadata>
+    <id>Bitifier.Configuration</id>
+    <title>Bitifier Configuration</title>
+    <version>0.1.0</version>
+    <authors>Martin Knafve</authors>
+    <requireLicenseAcceptance>false</requireLicenseAcceptance>
+    <description>Bitifier.Configuration simplifies centralized configuration.</description>
+    <licenseUrl>https://github.com/martinknafve/Bitifier.Configuration/blob/master/LICENSE</licenseUrl>
+    <language>en-US</language>
+    <projectUrl>https://github.com/martinknafve/Bitifier.Configuration</projectUrl>
+    <tags>centralized configuration encryption</tags>
+	<dependencies>
+	  <dependency id="Newtonsoft.Json" version="9.0.1" />
+	  <dependency id="Bitifier.RsaEncryption" version="0.2.0" />
+	</dependencies>	
+  </metadata>
+  <files>
+    <file src="bin\Release\Bitifier.Configuration.dll" target="lib" />
+  </files>
+</package>
