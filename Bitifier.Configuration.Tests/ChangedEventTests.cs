@@ -3,6 +3,7 @@ using System.IO;
 using System.Threading;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using NUnit.Framework.Constraints;
 
 namespace Bitifier.Configuration.Tests
 {
@@ -18,7 +19,13 @@ namespace Bitifier.Configuration.Tests
 
          try
          {
-            using (var reader = new ConfigReader<DummyAppConfiguration>(TimeSpan.FromMinutes(30), TimeSpan.FromSeconds(10), new Uri(configFile)))
+            var settings = new ConfigReaderSettings()
+               {
+                  RefreshInterval = TimeSpan.FromMinutes(30),
+                  RetryInterval = TimeSpan.FromSeconds(10)
+               };
+
+            using (var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri(configFile)))
             {
                reader.Changed += (sender, config) => { dummyAppConfiguration = config; };
 
@@ -45,7 +52,13 @@ namespace Bitifier.Configuration.Tests
          {
             var resetEvent = new ManualResetEvent(false);
 
-            using (var reader = new ConfigReader<DummyAppConfiguration>(TimeSpan.FromSeconds(1), TimeSpan.FromSeconds(1),
+            var settings = new ConfigReaderSettings()
+               {
+                  RefreshInterval = TimeSpan.FromSeconds(1),
+                  RetryInterval = TimeSpan.FromSeconds(1)
+               };
+
+            using (var reader = new ConfigReader<DummyAppConfiguration>(settings,
                   new Uri(configFile)))
             {
                reader.Changed += (sender, config) =>
@@ -80,8 +93,13 @@ namespace Bitifier.Configuration.Tests
          {
             int triggerCounter = 0;
 
-            using (var reader = new ConfigReader<DummyAppConfiguration>(TimeSpan.FromMilliseconds(50),
-                  TimeSpan.FromMilliseconds(50), new Uri(configFile)))
+            var settings = new ConfigReaderSettings()
+               {
+                  RefreshInterval = TimeSpan.FromMilliseconds(50),
+                  RetryInterval = TimeSpan.FromMilliseconds(50)
+               };
+
+            using (var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri(configFile)))
             {
                reader.Changed += (sender, config) =>
                {
@@ -117,9 +135,13 @@ namespace Bitifier.Configuration.Tests
 
             var resetEvent = new ManualResetEvent(false);
 
-            using (
-               var reader = new ConfigReader<DummyAppConfiguration>(TimeSpan.FromMilliseconds(50),
-                  TimeSpan.FromMilliseconds(50), new Uri(configFile)))
+            var settings = new ConfigReaderSettings()
+               {
+                  RefreshInterval = TimeSpan.FromMilliseconds(50),
+                  RetryInterval = TimeSpan.FromMilliseconds(50)
+               };
+
+            using (var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri(configFile)))
             {
                reader.Changed += (sender, config) =>
                {

@@ -22,9 +22,14 @@ namespace Bitifier.Configuration.Tests
 
          try
          {
+            var settings = new ConfigReaderSettings
+               {
+                  RefreshInterval = TimeSpan.FromMinutes(30),
+                  RetryInterval = TimeSpan.FromSeconds(10)
+               };
+
             using (
-               var reader = new ConfigReader<DummyAppConfiguration>(TimeSpan.FromMinutes(30), TimeSpan.FromSeconds(10),
-                  new Uri(configFile)))
+               var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri(configFile)))
             {
                AggregateException aggregateException = null;
 
@@ -60,9 +65,15 @@ namespace Bitifier.Configuration.Tests
             certificateStoreRepository.Setup(
                f => f.Find(It.IsAny<StoreLocation>(), It.IsAny<StoreName>(), TestCertificate.Thumbprint)).Returns(() => new [] {TestCertificate});
 
+            var settings = new ConfigReaderSettings
+               {
+                  RefreshInterval = TimeSpan.FromMinutes(30),
+                  RetryInterval = TimeSpan.FromSeconds(10),
+                  CertificateStoreRepository = certificateStoreRepository.Object
+            };
+
             using (
-               var reader = new ConfigReader<DummyAppConfiguration>(TimeSpan.FromMinutes(30), TimeSpan.FromSeconds(10),
-                  certificateStoreRepository.Object, new Uri(configFile)))
+               var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri(configFile)))
             {
                reader.Changed += (sender, config) => { dummyAppConfiguration = config; };
 

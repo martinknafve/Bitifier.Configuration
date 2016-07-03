@@ -9,35 +9,27 @@ namespace Bitifier.Configuration
    {
       private readonly ConfigDownloader _downloader;
       private readonly Timer _timer;
-      private readonly TimeSpan _refreshInterval;
-      private readonly ICertificateStoreRepository _certificateStoreRepository;
-      private readonly TimeSpan _retryInterval;
-
+      private readonly ConfigReaderSettings _settings;
       public event EventHandler<T> Changed;
       public event EventHandler<AggregateException> Error;
 
-      private bool _disposed = false;
+      private bool _disposed;
 
       private readonly ManualResetEvent _initialLoadCompleted = new ManualResetEvent(false);
 
-      public ConfigReader(TimeSpan refreshInterval, TimeSpan retryInterval, ICertificateStoreRepository certificateStoreRepository, params Uri[] configUris)
+      public ConfigReader(ConfigReaderSettings settings, params Uri[] configUris)
       {
-         _refreshInterval = refreshInterval;
-         _retryInterval = retryInterval;
-         _certificateStoreRepository = certificateStoreRepository;
+         if (settings == null)
+            throw new ArgumentNullException("settings", "settings must be specified.");
+
+         _settings = settings;
          _timer = new Timer(OnTick, null, Int32.MaxValue, Int32.MaxValue);
          _downloader = new ConfigDownloader(configUris);
       }
 
-      public ConfigReader(TimeSpan refreshInterval, TimeSpan retryInterval, params Uri[] configUris)
-          : this(refreshInterval, retryInterval, null, configUris)
-      {
-
-      }
-      
       public void Start(TimeSpan timeout)
       {
-         ChangeTimer(TimeSpan.FromSeconds(0), _refreshInterval);
+         ChangeTimer(TimeSpan.FromSeconds(0), _settings.RefreshInterval);
 
          if (!_initialLoadCompleted.WaitOne(timeout))
             throw new TimeoutException("Configuration was not loaded.");
@@ -76,10 +68,10 @@ namespace Bitifier.Configuration
       {
          X509Certificate2ThumbprintCrypto crypto;
 
-         if (_certificateStoreRepository == null)
+         if (_settings.CertificateStoreRepository == null)
             crypto = new X509Certificate2ThumbprintCrypto();
          else
-            crypto = new X509Certificate2ThumbprintCrypto(_certificateStoreRepository);
+            crypto = new X509Certificate2ThumbprintCrypto(_settings.CertificateStoreRepository);
 
          return crypto;
       }
@@ -121,11 +113,11 @@ namespace Bitifier.Configuration
          {
             if (succesful)
             {
-               ChangeTimer(_refreshInterval, _refreshInterval);
+               ChangeTimer(_settings.RefreshInterval, _settings.RefreshInterval);
             }
             else
             {
-               ChangeTimer(_retryInterval, _retryInterval);
+               ChangeTimer(_settings.RetryInterval, _settings.RetryInterval);
             }
          }
       }

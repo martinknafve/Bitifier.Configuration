@@ -17,7 +17,13 @@ namespace Bitifier.Configuration.Tests
 
          try
          {
-            using (var reader = new ConfigReader<DummyAppConfiguration>(TimeSpan.FromMinutes(30), TimeSpan.FromSeconds(10), new Uri(configFile)))
+            var settings = new ConfigReaderSettings
+               {
+                  RefreshInterval = TimeSpan.FromMinutes(30),
+                  RetryInterval = TimeSpan.FromSeconds(10)
+               };
+
+            using (var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri(configFile)))
             {
                reader.Changed += (sender, config) => { dummyAppConfiguration = config; };
 

@@ -15,8 +15,14 @@ namespace Bitifier.Configuration.Tests
       {
          string configFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 
+         var settings = new ConfigReaderSettings
+            {
+               RefreshInterval = TimeSpan.FromMinutes(30),
+               RetryInterval = TimeSpan.FromSeconds(10)
+            };
+
          using (
-            var reader = new ConfigReader<DummyAppConfiguration>(TimeSpan.FromMinutes(30), TimeSpan.FromSeconds(10),
+            var reader = new ConfigReader<DummyAppConfiguration>(settings,
                new Uri(configFile)))
          {
             AggregateException aggregateException = null;
@@ -36,9 +42,14 @@ namespace Bitifier.Configuration.Tests
       [Test]
       public void WhenStartedThrowsWebExceptionForInaccessibleWebUri()
       {
+         var settings = new ConfigReaderSettings
+         {
+            RefreshInterval = TimeSpan.FromMinutes(30),
+            RetryInterval = TimeSpan.FromSeconds(10)
+         };
+
          using (
-            var reader = new ConfigReader<DummyAppConfiguration>(TimeSpan.FromMinutes(30), TimeSpan.FromSeconds(10),
-               new Uri("https://nonexistant.example.com")))
+            var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri("https://nonexistant.example.com")))
          {
             AggregateException aggregateException = null;
 
@@ -59,8 +70,13 @@ namespace Bitifier.Configuration.Tests
       {
          string configFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
 
-         using (var reader = new ConfigReader<DummyAppConfiguration>(TimeSpan.FromSeconds(10), TimeSpan.FromMinutes(30),
-               new Uri(configFile), new Uri(configFile), new Uri("https://nonexistant.example.com")))
+         var settings = new ConfigReaderSettings
+         {
+            RefreshInterval = TimeSpan.FromSeconds(10),
+            RetryInterval = TimeSpan.FromMinutes(30)
+         };
+
+         using (var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri(configFile), new Uri(configFile), new Uri("https://nonexistant.example.com")))
          { 
             AggregateException aggregateException = null;
 
@@ -85,9 +101,14 @@ namespace Bitifier.Configuration.Tests
 
          var resetEvent = new ManualResetEvent(false);
 
+         var settings = new ConfigReaderSettings
+            {
+               RefreshInterval = TimeSpan.FromMilliseconds(50),
+               RetryInterval = TimeSpan.FromMilliseconds(50)
+            };
+
          using (
-            var reader = new ConfigReader<DummyAppConfiguration>(TimeSpan.FromMilliseconds(50),
-               TimeSpan.FromMilliseconds(50), new Uri(configFile)))
+            var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri(configFile)))
          {
             reader.Error += (sender, aggregateException) =>
             {

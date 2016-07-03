@@ -29,9 +29,14 @@ namespace Bitifier.Configuration.Tests
 
          using (new MockServer(12345, requestHandlers))
          {
+            var settings = new ConfigReaderSettings
+            {
+               RefreshInterval = TimeSpan.FromMinutes(30),
+               RetryInterval = TimeSpan.FromSeconds(10)
+            };
+            
             using (
-               var reader = new ConfigReader<DummyAppConfiguration>(TimeSpan.FromMinutes(30),
-                  TimeSpan.FromSeconds(10), new Uri("http://127.0.0.1:12345/data")))
+               var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri("http://127.0.0.1:12345/data")))
             {
                reader.Changed += (sender, config) => { dummyAppConfiguration = config; };
 
@@ -63,9 +68,14 @@ namespace Bitifier.Configuration.Tests
 
          using (new MockServer(12345, requestHandlers))
          {
+            var settings = new ConfigReaderSettings
+            {
+               RefreshInterval = TimeSpan.FromMilliseconds(50),
+               RetryInterval = TimeSpan.FromMilliseconds(50)
+            };
+
             using (
-               var reader = new ConfigReader<DummyAppConfiguration>(TimeSpan.FromMilliseconds(50),
-                  TimeSpan.FromMilliseconds(50), new Uri("http://127.0.0.1:12345/data")))
+               var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri("http://127.0.0.1:12345/data")))
             {
                reader.Changed += (sender, config) => { timesChanged++; };
                reader.Start(TimeSpan.FromSeconds(100));
@@ -103,9 +113,14 @@ namespace Bitifier.Configuration.Tests
 
          using (new MockServer(12345, requestHandlers))
          {
+            var settings = new ConfigReaderSettings
+            {
+               RefreshInterval = TimeSpan.FromMilliseconds(50),
+               RetryInterval = TimeSpan.FromMilliseconds(50)
+            };
+
             using (
-               var reader = new ConfigReader<DummyAppConfiguration>(TimeSpan.FromMilliseconds(50),
-                  TimeSpan.FromMilliseconds(50), new Uri("http://127.0.0.1:12345/data")))
+               var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri("http://127.0.0.1:12345/data")))
             {
                reader.Changed += (sender, config) => { timesChanged++; };
                reader.Start(TimeSpan.FromSeconds(100));
@@ -156,9 +171,14 @@ namespace Bitifier.Configuration.Tests
 
          using (new MockServer(12345, requestHandlers))
          {
+            var settings = new ConfigReaderSettings
+            {
+               RefreshInterval = TimeSpan.FromMilliseconds(50),
+               RetryInterval = TimeSpan.FromMilliseconds(50)
+            };
+
             using (
-               var reader = new ConfigReader<DummyAppConfiguration>(TimeSpan.FromMilliseconds(50),
-                  TimeSpan.FromMilliseconds(50), new Uri("http://127.0.0.1:12345/data")))
+               var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri("http://127.0.0.1:12345/data")))
             {
                reader.Changed += (sender, config) => { timesChanged++; };
                reader.Start(TimeSpan.FromSeconds(100));
