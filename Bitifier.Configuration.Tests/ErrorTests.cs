@@ -127,5 +127,48 @@ namespace Bitifier.Configuration.Tests
 
       }
 
+      [Test]
+      public void WhenStartedErrorEventTriggeredForFileWithSyntaxError()
+      {
+         string configFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+
+         File.WriteAllText(configFile, @"
+               Enabled: Otto");
+
+         try
+         {
+            var resetEvent = new ManualResetEvent(false);
+
+            var settings = new ConfigReaderSettings
+            {
+               RefreshInterval = TimeSpan.FromMilliseconds(50),
+               RetryInterval = TimeSpan.FromMilliseconds(50)
+            };
+
+            using (
+               var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri(configFile)))
+            {
+               reader.Error += (sender, aggregateException) =>
+               {
+                  Assert.AreEqual(1, aggregateException.InnerExceptions.Count);
+                  Assert.IsNotNull(aggregateException.InnerExceptions[0] as YamlDotNet.Core.YamlException);
+
+                  resetEvent.Set();
+
+               };
+
+               Assert.Throws<TimeoutException>(() => reader.Start(TimeSpan.FromSeconds(2)));
+
+               resetEvent.WaitOne();
+            }
+         }
+         finally
+         {
+            File.Delete(configFile);
+         }
+
+
+      }
+
    }
 }

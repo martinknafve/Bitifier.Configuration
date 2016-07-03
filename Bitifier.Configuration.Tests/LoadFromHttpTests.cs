@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using MockHttpServer;
-using Newtonsoft.Json;
 using NUnit.Framework;
+using YamlDotNet.Serialization;
 
 namespace Bitifier.Configuration.Tests
 {
@@ -20,7 +20,7 @@ namespace Bitifier.Configuration.Tests
 
          };
 
-         var configText = JsonConvert.SerializeObject(dummyAppConfiguration);
+         string configText = SerializationHelper.Serialize(dummyAppConfiguration);
 
          var requestHandlers = new List<MockHttpHandler>()
             {
@@ -34,7 +34,7 @@ namespace Bitifier.Configuration.Tests
                RefreshInterval = TimeSpan.FromMinutes(30),
                RetryInterval = TimeSpan.FromSeconds(10)
             };
-            
+
             using (
                var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri("http://127.0.0.1:12345/data")))
             {
@@ -57,7 +57,8 @@ namespace Bitifier.Configuration.Tests
             Value = 12345
          };
 
-         var configText = JsonConvert.SerializeObject(dummyAppConfiguration);
+         string configText = SerializationHelper.Serialize(dummyAppConfiguration);
+
 
          var requestHandlers = new List<MockHttpHandler>()
             {
@@ -102,7 +103,7 @@ namespace Bitifier.Configuration.Tests
                         Value = requestCount
                      };
 
-                  var configText = JsonConvert.SerializeObject(dummyAppConfiguration);
+                  string configText = SerializationHelper.Serialize(dummyAppConfiguration);
 
                   requestCount ++;
                   return configText;
@@ -160,7 +161,7 @@ namespace Bitifier.Configuration.Tests
                         Value = requestCount
                      };
 
-                   var configText = JsonConvert.SerializeObject(dummyAppConfiguration);
+                   string configText = SerializationHelper.Serialize(dummyAppConfiguration);
 
                    requestCount ++;
                    return configText;

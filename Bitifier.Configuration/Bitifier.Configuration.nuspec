@@ -12,7 +12,7 @@
     <projectUrl>https://github.com/martinknafve/Bitifier.Configuration</projectUrl>
     <tags>centralized configuration encryption</tags>
 	<dependencies>
-	  <dependency id="Newtonsoft.Json" version="9.0.1" />
+	  <dependency id="YamlDotNet.Json" version="3.9.0" />
 	  <dependency id="Bitifier.RsaEncryption" version="0.2.0" />
 	</dependencies>	
   </metadata>

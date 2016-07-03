@@ -4,8 +4,8 @@ using System.Security.Cryptography.X509Certificates;
 using Bitifier.Configuration.Tests.Certificates;
 using Bitifier.RsaEncryption;
 using Moq;
-using Newtonsoft.Json;
 using NUnit.Framework;
+using YamlDotNet.Serialization;
 
 namespace Bitifier.Configuration.Tests
 {
@@ -102,7 +102,8 @@ namespace Bitifier.Configuration.Tests
                Value = value
             };
 
-         var serializedPlainTextConfig = JsonConvert.SerializeObject(dummyAppConfiguration);
+
+         string serializedPlainTextConfig = SerializationHelper.Serialize(dummyAppConfiguration);
 
          var certificateRepo = new Mock<ICertificateStoreRepository>();
          certificateRepo.Setup(f => f.Find(It.IsAny<StoreLocation>(), It.IsAny<StoreName>(), It.IsAny<string>()))

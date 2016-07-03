@@ -1,7 +1,7 @@
 ﻿using System;
 using System.IO;
-using Newtonsoft.Json;
 using NUnit.Framework;
+using YamlDotNet.Serialization;
 
 namespace Bitifier.Configuration.Tests
 {
@@ -53,7 +53,7 @@ namespace Bitifier.Configuration.Tests
                Value = value
             };
 
-         File.WriteAllText(configFile, JsonConvert.SerializeObject(dummyAppConfiguration));
+         File.WriteAllText(configFile, SerializationHelper.Serialize(dummyAppConfiguration));
 
          return configFile;
       }

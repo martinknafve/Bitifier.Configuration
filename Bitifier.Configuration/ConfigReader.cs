@@ -1,7 +1,8 @@
 ﻿using System;
+using System.IO;
 using System.Threading;
 using Bitifier.RsaEncryption;
-using Newtonsoft.Json;
+using YamlDotNet.Serialization;
 
 namespace Bitifier.Configuration
 {
@@ -51,11 +52,19 @@ namespace Bitifier.Configuration
                var crypto = CreateCrypto();
                var plainTextJson = crypto.Decrypt(cipherTextWithCertificateInfo);
 
-               typedConfig = JsonConvert.DeserializeObject<T>(plainTextJson);
+               using (var input = new StringReader(plainTextJson))
+               {
+                  var deserializer = new Deserializer();
+                  typedConfig = deserializer.Deserialize<T>(input);
+               }
             }
             else
             {
-               typedConfig = JsonConvert.DeserializeObject<T>(configuration);
+               using (var input = new StringReader(configuration))
+               {
+                  var deserializer = new Deserializer();
+                  typedConfig = deserializer.Deserialize<T>(input);
+               }
             }
 
             InvokeChangedEvent(typedConfig);
