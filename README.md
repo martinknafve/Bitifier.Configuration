@@ -14,7 +14,7 @@ Bitifier Configuration makes it easy to implement the following:
 * Simple configuration storage using YAML or XML
 * Type-safe access to configuration with composite data structures (lists, dictionaries, etc)
 * Automatic refresh of settings from the data source
-* Assymetric encryption using RSA and X.509 certificates.
+* Optional asymmetric encryption using RSA and X.509 certificates.
 * Multiple data sources for failover
 
 # Tutorial
