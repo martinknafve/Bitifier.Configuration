@@ -1,12 +1,12 @@
 # Bitifier.Configuration
 
-Bitifier Configuration is a .NET library which simplifies implementation of centralized configuration. 
+Bitifier Configuration is a .NET library which simplifies handling of application configuration. 
 
 [![Build status](https://ci.appveyor.com/api/projects/status/lhk2hgvif3gx3xhw?svg=true)](https://ci.appveyor.com/project/MartinKnafve/bitifier-configuration)
 
 Bitifier Configuration can be obtained [via NuGet](https://www.nuget.org/packages/Bitifier.Configuration/).
 
-# Key features
+# Features
 
 Bitifier Configuration makes it easy to implement the following:
 
