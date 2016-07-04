@@ -2,6 +2,10 @@
 
 Bitifier Configuration is a .NET library which simplifies implementation of centralized configuration. 
 
+[![Build status](https://ci.appveyor.com/api/projects/status/lhk2hgvif3gx3xhw?svg=true)](https://ci.appveyor.com/project/MartinKnafve/bitifier-configuration)
+
+Bitifier Configuration can be obtained [via NuGet](https://www.nuget.org/packages/Bitifier.Configuration/).
+
 # Key features
 
 Bitifier Configuration makes it easy to implement the following:
@@ -18,7 +22,7 @@ Bitifier Configuration makes it easy to implement the following:
 1. Start Visual Studio 2015 or later
 2. Create a new project, of type Console Application (.NET Framework 4.5.2 or later)
 3. Add a NuGet reference to Bitifier.Configuration
-4. Define a new class to hold your configuration
+4. Define a new class to hold your configuration:
 
    ```cs
    class Config
@@ -27,7 +31,7 @@ Bitifier Configuration makes it easy to implement the following:
       public List<Guid> Values { get; set; }
    } 
    ```
-5. Create a YAML file holding the configuration. You can also choose to create the configuration as XML. When YAML is used, the file extension needs to be either .yml or .yaml and when XML is used, it needs to be .xml.
+5. Create a YAML file holding the configuration. You can also choose to create the configuration as XML. When YAML is used, the file extension needs to be either .yml or .yaml and when XML is used, it needs to be .xml:
 
    ```yaml
    Enabled: true
@@ -35,7 +39,7 @@ Bitifier Configuration makes it easy to implement the following:
     - a1954896-4cf5-49bb-b600-ad2fe22701d8
     - 7a4dc432-3045-4ee3-b49e-1b7cd4c655a1
   ```
-6. Create an instance of ConfigReader and subscribe to the Changed-event. The constructor takes a settings object, and a list of uri's the configuration should be fetched from. These uri's can either be full paths to local disk or a network share, or a HTTP Uri.
+6. Create an instance of ConfigReader and subscribe to the Changed-event. The constructor takes a settings object, and a list of uri's the configuration should be fetched from. These uri's can either be full paths to local disk or a network share, or a HTTP Uri. The settings object lets you define how often settings should be refreshed, and how often retries should be made if there's a problem accessing the data source.
 
    ```cs
    var settings = new ConfigReaderSettings()
