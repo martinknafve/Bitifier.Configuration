@@ -7,13 +7,13 @@ Bitifier Configuration is a .NET library which simplifies implementation of cent
 Bitifier Configuration makes it easy to implement the following:
 
 * Centralized configuration accessed over HTTP/HTTPS or file system
-* Simple configuration storage using YAML
+* Simple configuration storage using YAML or XML
 * Type-safe access to configuration with composite data structures (lists, dictionaries, etc)
 * Automatic refresh of settings from the data source
 * Assymetric encryption using RSA and X.509 certificates.
 * Multiple data sources for failover
 
-# Getting started
+# Tutorial
 
 1. Start Visual Studio 2015 or later
 2. Create a new project, of type Console Application (.NET Framework 4.5.2 or later)
@@ -30,7 +30,7 @@ Bitifier Configuration makes it easy to implement the following:
 5. Create a YAML file holding the configuration:
 
    ```yaml
-   Enabled: true,
+   Enabled: true
    Values
     - a1954896-4cf5-49bb-b600-ad2fe22701d8
     - 7a4dc432-3045-4ee3-b49e-1b7cd4c655a1
@@ -38,9 +38,12 @@ Bitifier Configuration makes it easy to implement the following:
 6. Create an instance of ConfigReader and subscribe to the Changed-event. The constructor takes three or more arguments.
 
    ```cs
-   var configReader = new ConfigReader<Config>(TimeSpan.FromSeconds(5), 
-                                               TimeSpan.FromSeconds(10), 
-                                               new Uri(@"C:\temp\config.yaml"));
+   var settings = new ConfigReaderSettings()
+      {
+         RefreshInterval = TimeSpan.FromSeconds(30),
+      };
+   
+   var configReader = new ConfigReader<Config>(settings, new Uri(@"C:\temp\config.yaml"));
    configReader.Changed += (source, config) =>
    {
       Console.WriteLine("Configuration updated. Config is now {0} and contains {1} values", 
@@ -54,17 +57,61 @@ Bitifier Configuration makes it easy to implement the following:
 7. To start reading the configuration, call the Start method on the config reader. `Start`-ing the ConfigReader will intiate an immediate read of the settings. The method will block until the settings are read, or the supplied timeout is reached. If the timeout is reached, a TimeoutException will be thrown.
 
    ```cs
-   configReader.Start(TimeSpan.FromSeconds(10));
+   configReader.Start(TimeSpan.FromSeconds(30));
    ```
-
 Below is the complete code listing:
    
+```cs
+using System;
+using System.Collections.Generic;
+using Bitifier.Configuration;
+
+namespace ConsoleApplication
+{
+   class Program
+   {
+      static void Main(string[] args)
+      {
+         var settings = new ConfigReaderSettings()
+            {
+               RefreshInterval = TimeSpan.FromSeconds(30),
+            };
+
+         var configReader = new ConfigReader<Config>(settings, new Uri(@"C:\temp\config.yaml"));
+         
+         configReader.Changed += (source, config) =>
+         {
+            Console.WriteLine("Configuration updated. Config is now {0} and contains {1} values",
+              config.Enabled,
+              config.Values.Count);
+         };
+
+         configReader.Start(TimeSpan.FromSeconds(30));
+
+         Console.ReadLine();
+      }
+
+   }
+
+   class Config
+   {
+      public bool Enabled { get; set; }
+      public List<Guid> Values { get; set; }
+   }
+}
+```
    
    
 # Error handling
 
 If there is a problem accessing the configuration (for example the HTTP backend is not responding) or if the file cannot be deserialized, the Error event will be triggered supplying information on what was failed.
 
-
-# Recommendations
-
+```cs
+   configReader.Error += (sorurce, aggregateException) =>
+      {
+         foreach (var exception in aggregateException.InnerExceptions)
+         {
+            Console.WriteLine(exception.Message);
+         }
+      };
+```
