@@ -3,7 +3,7 @@
   <metadata>
     <id>Bitifier.Configuration</id>
     <title>Bitifier Configuration</title>
-    <version>0.3.0</version>
+    <version>0.4.0</version>
     <authors>Martin Knafve</authors>
     <requireLicenseAcceptance>false</requireLicenseAcceptance>
     <description>Bitifier.Configuration simplifies centralized configuration.</description>
@@ -12,7 +12,7 @@
     <projectUrl>https://github.com/martinknafve/Bitifier.Configuration</projectUrl>
     <tags>centralized configuration encryption</tags>
 	<dependencies>
-	  <dependency id="YamlDotNet.Json" version="3.9.0" />
+	  <dependency id="YamlDotNet" version="3.9.0" />
 	  <dependency id="Bitifier.RsaEncryption" version="0.2.0" />
 	</dependencies>	
   </metadata>
