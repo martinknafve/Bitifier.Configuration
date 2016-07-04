@@ -50,7 +50,7 @@ Bitifier Configuration makes it easy to implement the following:
       {
          Console.WriteLine("Configuration updated. Config is now {0} and contains {1} values", 
             config.Enabled, 
-           config.Values.Count);
+            config.Values.Count);
       };
    ```
    
@@ -107,7 +107,7 @@ namespace ConsoleApplication
    
 # Error handling
 
-If there is a problem accessing the configuration (for example the HTTP backend is not responding) or if the file cannot be deserialized, the Error event will be triggered supplying information on what was failed.
+If there is a problem accessing the configuration (for example the HTTP backend is not responding) or if the file cannot be deserialized, the Error event will be triggered supplying information on what has failed.
 
 ```cs
    configReader.Error += (sorurce, aggregateException) =>
