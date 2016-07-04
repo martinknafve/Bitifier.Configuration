@@ -17,7 +17,7 @@ namespace Bitifier.Configuration
          _configUris = configUris;
       }
 
-      public bool DownloadIfChanged(out string configuration)
+      public bool DownloadIfChanged(out string configuration, out string extension)
       {
          var exceptions = new List<Exception>();
 
@@ -25,6 +25,8 @@ namespace Bitifier.Configuration
          {
             try
             {
+               extension = Path.GetExtension(uri.AbsolutePath);
+
                return DownloadIfChanged(uri, out configuration);
             }
             catch (Exception exception)

@@ -9,11 +9,16 @@ namespace Bitifier.Configuration.Tests
    public class LoadFromFileTests
    {
       [Test]
-      public void ShouldBePossibleToLoadConfigFromFile()
+      public void ShouldBePossibleToLoadFromFile()
       {
-         DummyAppConfiguration dummyAppConfiguration = null;
+         string configFile = Path.ChangeExtension(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()), ".yml");
 
-         string configFile = CreateDummyConfigurationFile(12345);
+         DummyAppConfiguration dummyAppConfiguration = new DummyAppConfiguration
+            {
+               Value = 12345
+            };
+
+         File.WriteAllText(configFile, SerializationHelper.SerializeAsYaml(dummyAppConfiguration));
 
          try
          {
@@ -37,25 +42,6 @@ namespace Bitifier.Configuration.Tests
          {
             File.Delete(configFile);
          }
-      }
-
-      private string CreateDummyConfigurationFile(int value)
-      {
-         string configFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
-
-         return CreateDummyConfigurationFile(configFile, value);
-      }
-
-      private string CreateDummyConfigurationFile(string configFile, int value)
-      {
-         DummyAppConfiguration dummyAppConfiguration = new DummyAppConfiguration
-            {
-               Value = value
-            };
-
-         File.WriteAllText(configFile, SerializationHelper.Serialize(dummyAppConfiguration));
-
-         return configFile;
       }
    }
 }

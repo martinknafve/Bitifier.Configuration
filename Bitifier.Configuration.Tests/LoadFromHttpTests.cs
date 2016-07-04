@@ -20,11 +20,11 @@ namespace Bitifier.Configuration.Tests
 
          };
 
-         string configText = SerializationHelper.Serialize(dummyAppConfiguration);
+         string configText = SerializationHelper.SerializeAsYaml(dummyAppConfiguration);
 
          var requestHandlers = new List<MockHttpHandler>()
             {
-                new MockHttpHandler("/data", "GET", (req, rsp, prm) => configText),
+                new MockHttpHandler("/data.yml", "GET", (req, rsp, prm) => configText),
             };
 
          using (new MockServer(12345, requestHandlers))
@@ -36,11 +36,11 @@ namespace Bitifier.Configuration.Tests
             };
 
             using (
-               var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri("http://127.0.0.1:12345/data")))
+               var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri("http://127.0.0.1:12345/data.yml")))
             {
                reader.Changed += (sender, config) => { dummyAppConfiguration = config; };
 
-               reader.Start(TimeSpan.FromSeconds(100));
+               reader.Start(TimeSpan.FromSeconds(5));
 
                Assert.IsNotNull(dummyAppConfiguration);
                Assert.AreEqual(12345, dummyAppConfiguration.Value);
@@ -57,12 +57,12 @@ namespace Bitifier.Configuration.Tests
             Value = 12345
          };
 
-         string configText = SerializationHelper.Serialize(dummyAppConfiguration);
+         string configText = SerializationHelper.SerializeAsYaml(dummyAppConfiguration);
 
 
          var requestHandlers = new List<MockHttpHandler>()
             {
-                new MockHttpHandler("/data", "GET", (req, rsp, prm) => configText),
+                new MockHttpHandler("/data.yml", "GET", (req, rsp, prm) => configText),
             };
 
          int timesChanged = 0;
@@ -76,7 +76,7 @@ namespace Bitifier.Configuration.Tests
             };
 
             using (
-               var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri("http://127.0.0.1:12345/data")))
+               var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri("http://127.0.0.1:12345/data.yml")))
             {
                reader.Changed += (sender, config) => { timesChanged++; };
                reader.Start(TimeSpan.FromSeconds(100));
@@ -96,14 +96,14 @@ namespace Bitifier.Configuration.Tests
 
          var requestHandlers = new List<MockHttpHandler>()
             {
-                new MockHttpHandler("/data", "GET", (req, rsp, prm) =>
+                new MockHttpHandler("/data.yml", "GET", (req, rsp, prm) =>
                 {
                   DummyAppConfiguration dummyAppConfiguration = new DummyAppConfiguration
                      {
                         Value = requestCount
                      };
 
-                  string configText = SerializationHelper.Serialize(dummyAppConfiguration);
+                  string configText = SerializationHelper.SerializeAsYaml(dummyAppConfiguration);
 
                   requestCount ++;
                   return configText;
@@ -121,7 +121,7 @@ namespace Bitifier.Configuration.Tests
             };
 
             using (
-               var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri("http://127.0.0.1:12345/data")))
+               var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri("http://127.0.0.1:12345/data.yml")))
             {
                reader.Changed += (sender, config) => { timesChanged++; };
                reader.Start(TimeSpan.FromSeconds(100));
@@ -141,7 +141,7 @@ namespace Bitifier.Configuration.Tests
 
          var requestHandlers = new List<MockHttpHandler>()
             {
-                new MockHttpHandler("/data", "GET", (req, rsp, prm) =>
+                new MockHttpHandler("/data.yml", "GET", (req, rsp, prm) =>
                 {
                    var ifNoneMatchValue = req.Headers["If-None-Match"];
 
@@ -161,7 +161,7 @@ namespace Bitifier.Configuration.Tests
                         Value = requestCount
                      };
 
-                   string configText = SerializationHelper.Serialize(dummyAppConfiguration);
+                   string configText = SerializationHelper.SerializeAsYaml(dummyAppConfiguration);
 
                    requestCount ++;
                    return configText;
@@ -179,7 +179,7 @@ namespace Bitifier.Configuration.Tests
             };
 
             using (
-               var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri("http://127.0.0.1:12345/data")))
+               var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri("http://127.0.0.1:12345/data.yml")))
             {
                reader.Changed += (sender, config) => { timesChanged++; };
                reader.Start(TimeSpan.FromSeconds(100));

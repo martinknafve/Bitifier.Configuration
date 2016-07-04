@@ -2,6 +2,7 @@
 using System.Configuration;
 using System.IO;
 using System.Net;
+using System.Runtime.Serialization;
 using System.Threading;
 using NUnit.Framework;
 
@@ -13,7 +14,7 @@ namespace Bitifier.Configuration.Tests
       [Test]
       public void WhenStartedThrowsFileNotFoundExceptionForLocalInaccessibleFile()
       {
-         string configFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+         string configFile = Path.ChangeExtension(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()), ".yaml");
 
          var settings = new ConfigReaderSettings
             {
@@ -130,7 +131,49 @@ namespace Bitifier.Configuration.Tests
       [Test]
       public void WhenStartedErrorEventTriggeredForFileWithSyntaxError()
       {
-         string configFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+         string configFile = Path.ChangeExtension(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()), ".xml");
+
+         File.WriteAllText(configFile, @"<stuff>a</otherstuff>");
+
+         try
+         {
+            var resetEvent = new ManualResetEvent(false);
+
+            var settings = new ConfigReaderSettings
+            {
+               RefreshInterval = TimeSpan.FromMilliseconds(50),
+               RetryInterval = TimeSpan.FromMilliseconds(50)
+            };
+
+            using (
+               var reader = new ConfigReader<DummyAppConfiguration>(settings, new Uri(configFile)))
+            {
+               reader.Error += (sender, aggregateException) =>
+               {
+                  Assert.AreEqual(1, aggregateException.InnerExceptions.Count);
+                  Assert.IsNotNull(aggregateException.InnerExceptions[0] as SerializationException);
+
+                  resetEvent.Set();
+
+               };
+
+               Assert.Throws<TimeoutException>(() => reader.Start(TimeSpan.FromSeconds(2)));
+
+               resetEvent.WaitOne();
+            }
+         }
+         finally
+         {
+            File.Delete(configFile);
+         }
+
+
+      }
+
+      [Test]
+      public void WhenStartedErrorEventTriggeredForFileWithUnknownExtension()
+      {
+         string configFile = Path.ChangeExtension(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()), ".unknown");
 
          File.WriteAllText(configFile, @"
                Enabled: Otto");
@@ -151,7 +194,7 @@ namespace Bitifier.Configuration.Tests
                reader.Error += (sender, aggregateException) =>
                {
                   Assert.AreEqual(1, aggregateException.InnerExceptions.Count);
-                  Assert.IsNotNull(aggregateException.InnerExceptions[0] as YamlDotNet.Core.YamlException);
+                  Assert.IsNotNull(aggregateException.InnerExceptions[0] as InvalidOperationException);
 
                   resetEvent.Set();
 

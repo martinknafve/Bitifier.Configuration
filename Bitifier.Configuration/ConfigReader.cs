@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Runtime.Serialization;
 using System.Threading;
 using Bitifier.RsaEncryption;
 using YamlDotNet.Serialization;
@@ -39,8 +40,9 @@ namespace Bitifier.Configuration
       private void LoadInternal()
       {
          string configuration;
+         string extension;
 
-         if (_downloader.DownloadIfChanged(out configuration))
+         if (_downloader.DownloadIfChanged(out configuration, out extension))
          {
             T typedConfig;
 
@@ -50,27 +52,55 @@ namespace Bitifier.Configuration
                var cipherTextWithCertificateInfo = serializer.Deserialize(configuration);
 
                var crypto = CreateCrypto();
-               var plainTextJson = crypto.Decrypt(cipherTextWithCertificateInfo);
+               var plainText = crypto.Decrypt(cipherTextWithCertificateInfo);
 
-               using (var input = new StringReader(plainTextJson))
-               {
-                  var deserializer = new Deserializer();
-                  typedConfig = deserializer.Deserialize<T>(input);
-               }
+               typedConfig = Deserialize(plainText, extension);
             }
             else
             {
-               using (var input = new StringReader(configuration))
-               {
-                  var deserializer = new Deserializer();
-                  typedConfig = deserializer.Deserialize<T>(input);
-               }
+               typedConfig = Deserialize(configuration, extension);
             }
 
             InvokeChangedEvent(typedConfig);
 
             _initialLoadCompleted.Set();
          }
+      }
+
+      private static T Deserialize(string configuration, string extension)
+      {
+         T typedConfig;
+
+         switch (extension.ToLowerInvariant())
+         {
+            case ".yaml":
+            case ".yml":
+            {
+               using (var input = new StringReader(configuration))
+               {
+                  var deserializer = new Deserializer(ignoreUnmatched: true);
+                  typedConfig = deserializer.Deserialize<T>(input);
+               }
+               break;
+            }
+            case ".xml":
+            {
+               using (var stream = new MemoryStream())
+               {
+                  byte[] data = System.Text.Encoding.UTF8.GetBytes(configuration);
+                  stream.Write(data, 0, data.Length);
+                  stream.Position = 0;
+
+                  var deserializer = new DataContractSerializer(typeof (T));
+                  typedConfig = (T) deserializer.ReadObject(stream);
+               }
+               break;
+            }
+            default:
+               throw new InvalidOperationException(string.Format("Unsupported extension: {0}. Only .yaml, .yml and .xml is supported", extension));
+         }
+               
+         return typedConfig;
       }
 
       private X509Certificate2ThumbprintCrypto CreateCrypto()

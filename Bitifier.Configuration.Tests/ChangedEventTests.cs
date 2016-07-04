@@ -170,7 +170,7 @@ namespace Bitifier.Configuration.Tests
 
       private string CreateDummyConfigurationFile(int value)
       {
-         string configFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+         string configFile = Path.ChangeExtension(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()), ".xml");
 
          return CreateDummyConfigurationFile(configFile, value);
       }
@@ -182,7 +182,7 @@ namespace Bitifier.Configuration.Tests
                Value = value
             };
 
-         File.WriteAllText(configFile, SerializationHelper.Serialize(dummyAppConfiguration));
+         File.WriteAllText(configFile, SerializationHelper.SerializeAsXml(dummyAppConfiguration));
 
          return configFile;
       }

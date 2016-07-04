@@ -90,7 +90,7 @@ namespace Bitifier.Configuration.Tests
 
       private string CreateDummyConfigurationFile(int value)
       {
-         string configFile = Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString());
+         string configFile = Path.ChangeExtension(Path.Combine(Path.GetTempPath(), Guid.NewGuid().ToString()), ".yml");
 
          return CreateDummyConfigurationFile(configFile, value);
       }
@@ -103,7 +103,7 @@ namespace Bitifier.Configuration.Tests
             };
 
 
-         string serializedPlainTextConfig = SerializationHelper.Serialize(dummyAppConfiguration);
+         string serializedPlainTextConfig = SerializationHelper.SerializeAsYaml(dummyAppConfiguration);
 
          var certificateRepo = new Mock<ICertificateStoreRepository>();
          certificateRepo.Setup(f => f.Find(It.IsAny<StoreLocation>(), It.IsAny<StoreName>(), It.IsAny<string>()))
