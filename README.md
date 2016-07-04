@@ -40,18 +40,18 @@ Bitifier Configuration makes it easy to implement the following:
 6. Create an instance of ConfigReader and subscribe to the Changed-event. The constructor takes a settings object, and a list of uri's the configuration should be fetched from. These uri's can either be full paths to local disk or a network share, or a HTTP Uri. The settings object lets you define how often settings should be refreshed, and how often retries should be made if there's a problem accessing the data source.
 
    ```cs
-   var settings = new ConfigReaderSettings()
+   var settings = new ConfigReaderSettings
       {
          RefreshInterval = TimeSpan.FromSeconds(30),
       };
    
    var configReader = new ConfigReader<Config>(settings, new Uri(@"C:\temp\config.yaml"));
    configReader.Changed += (source, config) =>
-   {
-      Console.WriteLine("Configuration updated. Config is now {0} and contains {1} values", 
-        config.Enabled, 
-        config.Values.Count);
-   };
+      {
+         Console.WriteLine("Configuration updated. Config is now {0} and contains {1} values", 
+            config.Enabled, 
+           config.Values.Count);
+      };
    ```
    
    The Changed-event will be triggerd whenever the configuration has been updated. If a HTTP/HTTPS backend is used, and it supports ETag, then whenever the ETag value changes the event will be triggered. If the server does not provide a ETag, or a local file system is used, the SHA1 hash of the config file will beused.
@@ -87,15 +87,13 @@ namespace ConsoleApplication
          configReader.Changed += (source, config) =>
          {
             Console.WriteLine("Configuration updated. Config is now {0} and contains {1} values",
-              config.Enabled,
-              config.Values.Count);
+               config.Enabled,
+               config.Values.Count);
          };
 
          configReader.Start(TimeSpan.FromSeconds(30));
-
          Console.ReadLine();
       }
-
    }
 
    class Config
