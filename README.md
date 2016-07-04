@@ -35,7 +35,7 @@ Bitifier Configuration makes it easy to implement the following:
 
    ```yaml
    Enabled: true
-   Values
+   Values:
     - a1954896-4cf5-49bb-b600-ad2fe22701d8
     - 7a4dc432-3045-4ee3-b49e-1b7cd4c655a1
   ```
