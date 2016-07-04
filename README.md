@@ -27,7 +27,7 @@ Bitifier Configuration makes it easy to implement the following:
       public List<Guid> Values { get; set; }
    } 
    ```
-5. Create a YAML file holding the configuration:
+5. Create a YAML file holding the configuration. You can also choose to create the configuration as XML. When YAML is used, the file extension needs to be either .yml or .yaml and when XML is used, it needs to be .xml.
 
    ```yaml
    Enabled: true
@@ -35,7 +35,7 @@ Bitifier Configuration makes it easy to implement the following:
     - a1954896-4cf5-49bb-b600-ad2fe22701d8
     - 7a4dc432-3045-4ee3-b49e-1b7cd4c655a1
   ```
-6. Create an instance of ConfigReader and subscribe to the Changed-event. The constructor takes three or more arguments.
+6. Create an instance of ConfigReader and subscribe to the Changed-event. The constructor takes a settings object, and a list of uri's the configuration should be fetched from. These uri's can either be full paths to local disk or a network share, or a HTTP Uri.
 
    ```cs
    var settings = new ConfigReaderSettings()
