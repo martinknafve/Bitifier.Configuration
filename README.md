@@ -118,3 +118,7 @@ If there is a problem accessing the configuration (for example the HTTP backend 
          }
       };
 ```
+
+## Encryption
+
+Bitifier.Configuration can automatically decrypt configuration files which have been encrypted using [Bitifier.RsaEncryption.Console](https://github.com/martinknafve/Bitifier.RsaEncryption).
