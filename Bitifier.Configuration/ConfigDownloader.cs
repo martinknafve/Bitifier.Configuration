@@ -70,7 +70,7 @@ namespace Bitifier.Configuration
                {
                   var response = (HttpWebResponse) exception.Response;
 
-                  if (response.StatusCode == HttpStatusCode.Conflict)
+                  if (response.StatusCode == HttpStatusCode.NotModified)
                   {
                      configuration = null;
                      return false;
