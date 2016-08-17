@@ -149,7 +149,7 @@ namespace Bitifier.Configuration.Tests
                    {
                       if (ifNoneMatchValue == "MyEtag")
                       {
-                         rsp.StatusCode = 409;
+                         rsp.StatusCode = 304;
                          return string.Empty;
                       }
                    }
